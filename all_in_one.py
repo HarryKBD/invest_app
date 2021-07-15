@@ -1,4 +1,7 @@
 import hdb
+import sys
+import math
+import argparse
 from datetime import datetime
 from datetime import date
 import matplotlib.pyplot as plt
@@ -103,6 +106,12 @@ def get_stock_data_from_server(code, s_datetime, e_datetime):
 7. update stock database for 1 year
 """
 
+def show_menu():
+    print('1. show all funds    2. show magic funds')
+    print('3. show low funds    4. show quant funds')
+    print('5. show LAA status   6. show exchange rate')
+    print('7. update stock database for 1 year')
+
 def create_stock_status(conn, code, buy_date, buy_price, buy_cnt, fund_name, today = None, eng_name=True):
     t = datetime.now()
     if today != None:
@@ -162,38 +171,61 @@ def print_fund_status(stocks, fund_name):
     print("")
 
 
-
-
-if __name__ == "__main__":
-    conn = hdb.connect_db("stock_all.db")
-
+def prepare_fund_data(conn):
     fund_items_raw = hdb.get_fund_items(conn)
 
     fund_stocks = []
+    total_cnt = len(fund_items_raw)
+    cur = 0
+    print_p = 10
     for raw in fund_items_raw:
         st = create_stock_status(conn, raw[0], raw[1], float(raw[2]), int(raw[3]), raw[4], today = None, eng_name=True)
         #st.print_status()
         fund_stocks.append(st)
+        cur += 1
+        p = cur / total_cnt * 100.0
+        if p > print_p:
+            print(f'Getting data....... {p: <3.2f} %')
+            print_p += 10
+    return fund_stocks
+
+if __name__ == "__main__":
+    conn = hdb.connect_db("stock_all.db")
+
+    fund_stocks = prepare_fund_data(conn)
 
     fund_list = ['HighPerf_LowVal', 'SuperQuant', 'NewMagic_Small20']
 
-    for f in fund_list:
-        print_fund_status(fund_stocks, f)
+    while True:
+        line = input('Prompt ("quit" to quit): ')
+        if line == 'stop':
+            break
+        if line == 'h' or line == 'help':
+            show_menu()
+            continue
 
-    print_fund_status(fund_stocks, 'all')
-
-
-
-
+        if line == '1':
+            print_fund_status(fund_stocks, 'all')
+            continue
+        if line == '2':
+            print_fund_status(fund_stocks, fund_list[2])
+            continue
+        if line == '3':
+            print_fund_status(fund_stocks, fund_list[0])
+            continue
+        if line == '4':
+            print_fund_status(fund_stocks, fund_list[1])
+            continue
 
     conn.close()
 
-
-
-
-
-    while True:
-        line = input('Prompt ("stop" to quit): ')
-        if line == 'stop':
-            break
-        print(f'{line}')
+#show menu
+"""
+1. show all funds
+2. show magic funds
+3. show low funds
+4. show quant funds
+5. show LAA status
+6. show exchange rate
+7. update stock database for 1 year
+"""
