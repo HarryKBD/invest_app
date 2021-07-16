@@ -4,10 +4,9 @@ import sys
 import argparse
 from datetime import datetime
 from datetime import date
-import happy
-import korea_stocks_info
 import code_list
 import happy_utils as ht
+import happy_server as hs
 from stock_def import StockPrice
 
 FORMAT_DATE = '%Y-%m-%d'
@@ -37,7 +36,7 @@ def prepare_initial_table(conn, code_list, date_from, date_to):
     print("{} from  ==> {} to".format(sdate_str, edate_str))
     cnt = 1
     for code in code_list:
-        result_list = happy.get_stock_data_from_server(code, date_from, date_to)
+        result_list = hs.get_stock_data_from_server(code, date_from, date_to)
         hdb.insert_stock_data(conn, result_list)
         print("Getting {} data:  {} / {} ==> cnt: {}".format(code, str(cnt), str(len(code_list)), str(len(result_list))))
         cnt += 1
@@ -200,14 +199,14 @@ if __name__ == "__main__":
     #my_codes = ['VT', 'DBC', 'IAU', 'TLT', 'LTPZ', 'VCLT', 'EMLC']
     #my_codes = ['US500', 'UNRATE']
     my_codes = ['IWD', 'GLD', 'IEF', 'QQQ', 'SHY', 'SSO', 'UBT', 'UGL', 'TQQQ']
-    my_codes = ['069500']
+    my_codes = ['US500']
  
     tokens = '2000-01-01'.split("-")
     datef = datetime(int(tokens[0]), int(tokens[1]), int(tokens[2]))
-    tokens ='2021-05-16'.split("-")
+    tokens ='2021-07-30'.split("-")
     datet = datetime(int(tokens[0]), int(tokens[1]), int(tokens[2]))
     prepare_initial_table(conn, my_codes, datef, datet)
-    #prepare_fred_init_data(conn, datef, datet)
+    prepare_fred_init_data(conn, datef, datet)
     ###########################################################################################
     
     ###################### To init the list of the stocks interested ##########################

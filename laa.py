@@ -40,7 +40,7 @@ def get_unrate_status(conn, base_date):
         st = "BAD"
     else:
         st = "GOOD"
-    #print(f'latest_mon:{fdate[-1]} 12 months Average is : {avg:.2f} cnt: {add_cnt}, cur: {price_list[-1]:.2f} {st}')
+    print(f'latest_mon:{fdate[-1]} 12 months Average is : {avg:.2f} cnt: {add_cnt}, cur: {price_list[-1]:.2f} {st}')
     
     if st == "GOOD":
         return True
@@ -51,7 +51,7 @@ def get_snp_status(conn, base_date):
     avg, curr_price, curr_date = get_moving_avg(conn, 'US500', base_date, 200)
     if avg < 0:
         return None
-    #print(f'{curr_price} avg {avg}')
+    print(f'{curr_price} avg {avg}')
     if curr_price > avg:
         return True
     else:

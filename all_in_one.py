@@ -16,10 +16,12 @@ from stock_def import StockPrice
 from stock_def import fund_stock
 import happy_utils as ht
 from happy_utils import FORMAT_DATE
+import laa
 
 MY_HOME='./'
 
 cal = SouthKorea()
+fund_stocks_all = []
 
 
 class Logger:
@@ -189,32 +191,50 @@ def prepare_fund_data(conn):
             print_p += 10
     return fund_stocks
 
+def show_laa_status(conn, dd):
+    un_status = laa.get_unrate_status(conn, dd)
+    snp_status = laa.get_snp_status(conn, dd)
+    print(f'{ht.datetime_to_str(dd)} ==> UNRATE:{un_status}  S&P:{snp_status}')
+    if un_status == None or snp_status == None:
+        print("Error........")
+        return None, None
+    return un_status, snp_status
+
+def get_fund_stocks(conn):
+    global fund_stocks_all
+    if len(fund_stocks_all) <= 0:
+        fund_stocks_all = prepare_fund_data(conn)
+    return fund_stocks_all
+
+ 
 if __name__ == "__main__":
     conn = hdb.connect_db("stock_all.db")
-
-    fund_stocks = prepare_fund_data(conn)
-
+    fund_stocks = []
     fund_list = ['HighPerf_LowVal', 'SuperQuant', 'NewMagic_Small20']
 
     while True:
         line = input('Prompt ("quit" to quit): ')
-        if line == 'stop':
+        if line == 'quit':
             break
         if line == 'h' or line == 'help':
             show_menu()
             continue
 
         if line == '1':
-            print_fund_status(fund_stocks, 'all')
+            print_fund_status(get_fund_stocks(conn), 'all')
             continue
         if line == '2':
-            print_fund_status(fund_stocks, fund_list[2])
+            print_fund_status(get_fund_stocks(conn), fund_list[2])
             continue
         if line == '3':
-            print_fund_status(fund_stocks, fund_list[0])
+            print_fund_status(get_fund_stocks(conn), fund_list[0])
             continue
         if line == '4':
-            print_fund_status(fund_stocks, fund_list[1])
+            print_fund_status(get_fund_stocks(conn), fund_list[1])
+            continue
+        if line == '5':
+            #show_laa_status(conn, ht.datetime_to_str(datetime.now()))
+            show_laa_status(conn, datetime.now())
             continue
 
     conn.close()
