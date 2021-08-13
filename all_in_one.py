@@ -247,5 +247,14 @@ if __name__ == "__main__":
 4. show quant funds
 5. show LAA status
 6. show exchange rate
-7. update stock database for 1 year
+7. update all stock database 20 years
+8. update all stock database by days before. arg : [days_before_to_get_update]
+0. show US Stocks
+
+What to update
+1. init_fund_data
+2. update prices of sotcks interested. (QQQ, RPAR whatever... for LAA/FUND... TBD)
+3. update market indicator (LABOR)
+4. 
+
 """

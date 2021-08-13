@@ -35,6 +35,7 @@ def prepare_initial_table(conn, code_list, date_from, date_to):
 
     print("{} from  ==> {} to".format(sdate_str, edate_str))
     cnt = 1
+    print(code_list)
     for code in code_list:
         result_list = hs.get_stock_data_from_server(code, date_from, date_to)
         hdb.insert_stock_data(conn, result_list)
@@ -189,7 +190,6 @@ if __name__ == "__main__":
     #hdb.init_stock_basic_info_table(conn, 'stock_basic_info_20210307.csv')
     #print(hdb.get_stock_names(conn, '015860'))
     
-    #init_fund_list_db(conn)
 
     ##################To fill the stock price list use this block##############################
     #my_codes = hdb.get_stock_code_list_interested(conn)
@@ -198,15 +198,18 @@ if __name__ == "__main__":
     my_codes = ['VIG','QQQ','VTI','VOO','IVV','EFA','SPY', 'QLD', 'TQQQ', 'FNGU', 'DDM', 'SOXL', 'SSO', 'UPRO','123320', '233160', '243880', '122630', '306950', '233740', '102110', '232080', '139260', '229720', '226980', '229200', '102110', '114820']
     #my_codes = ['VT', 'DBC', 'IAU', 'TLT', 'LTPZ', 'VCLT', 'EMLC']
     #my_codes = ['US500', 'UNRATE']
-    my_codes = ['IWD', 'GLD', 'IEF', 'QQQ', 'SHY', 'SSO', 'UBT', 'UGL', 'TQQQ']
-    my_codes = ['US500']
+    #my_codes = ['IWD', 'GLD', 'IEF', 'QQQ', 'SHY', 'SSO', 'UBT', 'UGL', 'TQQQ']
  
     tokens = '2000-01-01'.split("-")
     datef = datetime(int(tokens[0]), int(tokens[1]), int(tokens[2]))
     tokens ='2021-07-30'.split("-")
     datet = datetime(int(tokens[0]), int(tokens[1]), int(tokens[2]))
-    prepare_initial_table(conn, my_codes, datef, datet)
+    #prepare_initial_table(conn, my_codes, datef, datet)
     prepare_fred_init_data(conn, datef, datet)
+    #init_fund_list_db(conn)
+
+
+
     ###########################################################################################
     
     ###################### To init the list of the stocks interested ##########################
