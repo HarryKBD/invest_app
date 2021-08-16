@@ -60,7 +60,7 @@ def get_fred_data_from_server(code, s_datetime, e_datetime):
         i = 0
         for value in data_list:
             last_date =  idx[i].to_pydatetime()
-            print(f'{last_date} => {value}')
+            #print(f'{last_date} => {value}')
             ret.append((last_date, value))
             i += 1
         

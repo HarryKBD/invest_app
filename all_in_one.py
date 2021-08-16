@@ -21,35 +21,6 @@ import code_list
 cal = SouthKorea()
 fund_stocks_all = []
 
-class Logger:
-    def __init__(self, fname):
-        now = datetime.now()
-        self.log_file = hdb.MY_HOME + fname + '_log_' + now.strftime("%m%d") + '.txt'
-        self.log_level = 5
-        self.fd_opened = False
-        
-    def enable(self):
-        self.fd = open(self.log_file, "a")
-        self.fd_opened = True
-        
-    def w(self, msg, cprint = False, level=1):
-        if self.log_level > level:
-            self.fd.write(datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f") + "  :  " + msg + "\n")
-        if cprint:
-            print(msg)
-        
-    def set_level(self, level):
-        self.log_level = level
-        
-    def disable(self):
-        if self.fd_opened:
-            self.fd_opened = False
-            self.fd.close()
-
-#global log
-log = Logger("flow")
-log.enable()    
-
 
 def is_working_day(t):
     return cal.is_working_day(date(t.year, t.month, t.day))

@@ -7,8 +7,39 @@ Created on Sun Mar 14 18:19:45 2021
 FORMAT_DATE = '%Y-%m-%d'
 
 import datetime
+import hdb
 from happy_utils import FORMAT_DATE
 from workalendar.asia import SouthKorea
+
+
+class Logger:
+    def __init__(self, fname):
+        now = datetime.datetime.now()
+        self.log_file = hdb.MY_HOME + fname + '_log_' + now.strftime("%m%d") + '.txt'
+        self.log_level = 5
+        self.fd_opened = False
+        print(self.log_file)
+        
+    def enable(self):
+        self.fd = open(self.log_file, "a")
+        self.fd_opened = True
+        print('enable: ' + self.log_file)
+        
+    def w(self, msg, cprint = True, level=1):
+        if self.log_level > level:
+            self.fd.write(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f") + "  :  " + msg + "\n")
+        if cprint:
+            print(msg)
+        
+    def set_level(self, level):
+        self.log_level = level
+        
+    def disable(self):
+        if self.fd_opened:
+            self.fd_opened = False
+            self.fd.close()
+
+
 
 def get_year(dd):
     tokens =  dd.split("-")
@@ -34,8 +65,6 @@ def is_working_day(t):
 
 #-------------------------
 #https://financedata.github.io/posts/finance-data-reader-users-guide.html
-
-
 
 
 
