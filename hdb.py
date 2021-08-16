@@ -8,12 +8,13 @@ import matplotlib.pyplot as plt
 import sqlite3
 import csv
 from datetime import datetime
-from datetime import date
 
 FORMAT_DATE = '%Y-%m-%d'
+#MY_HOME='/home/pi/invest_app/'
+MY_HOME='./'
 
 def connect_db(db_name):
-    conn = sqlite3.connect(db_name)
+    conn = sqlite3.connect(MY_HOME + db_name)
     return conn
 
 

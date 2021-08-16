@@ -1,7 +1,4 @@
 import hdb
-import sys
-import math
-import argparse
 from datetime import datetime
 from datetime import date
 import matplotlib.pyplot as plt
@@ -16,18 +13,18 @@ from stock_def import StockPrice
 from stock_def import fund_stock
 import happy_utils as ht
 from happy_utils import FORMAT_DATE
+import stock_utils as su
 import laa
+import code_list
 
-MY_HOME='./'
 
 cal = SouthKorea()
 fund_stocks_all = []
 
-
 class Logger:
     def __init__(self, fname):
         now = datetime.now()
-        self.log_file = MY_HOME + fname + '_log_' + now.strftime("%m%d") + '.txt'
+        self.log_file = hdb.MY_HOME + fname + '_log_' + now.strftime("%m%d") + '.txt'
         self.log_level = 5
         self.fd_opened = False
         
@@ -41,14 +38,13 @@ class Logger:
         if cprint:
             print(msg)
         
-    def set_level(level):
+    def set_level(self, level):
         self.log_level = level
         
     def disable(self):
         if self.fd_opened:
             self.fd_opened = False
             self.fd.close()
-
 
 #global log
 log = Logger("flow")
@@ -94,7 +90,6 @@ def get_stock_data_from_server(code, s_datetime, e_datetime):
         #sdate_str = "{}-{}-{}".format(last_date.year, last_date.month+1, last_date.day)
 
     return price_days
-
 
 
 #show menu
@@ -206,6 +201,14 @@ def get_fund_stocks(conn):
         fund_stocks_all = prepare_fund_data(conn)
     return fund_stocks_all
 
+def show_market_trend(conn):
+    codes = code_list.my_interested_codes
+    
+    for c in codes:
+        high, low, latest = su.get_stock_trend(conn, c, '2019-01-01')
+        gap_from_high = (latest - high)/high * 100.0
+        gap_from_low = (latest - low)/low * 100.0
+        print(f'{c: <7} =>  High: {high: > 10.1f} ({gap_from_high: > 7.1f} %)     LOW: {low: > 7.1f} ({gap_from_low: > 7.1f} %), Cur: {latest: > 8.1f} ')
  
 if __name__ == "__main__":
     conn = hdb.connect_db("stock_all.db")
@@ -214,7 +217,7 @@ if __name__ == "__main__":
 
     while True:
         line = input('Prompt ("quit" to quit): ')
-        if line == 'quit':
+        if line == 'quit' or line == 'q':
             break
         if line == 'h' or line == 'help':
             show_menu()
@@ -235,6 +238,17 @@ if __name__ == "__main__":
         if line == '5':
             #show_laa_status(conn, ht.datetime_to_str(datetime.now()))
             show_laa_status(conn, datetime.now())
+            continue
+        if line == '6':
+            show_market_trend(conn)
+            continue
+        if line  == '100':
+            print("Updating all stock db for a year")
+            su.init_all_stock_data_by_days(conn, 30)
+            continue
+        if line == '101':
+            print("Updating all database")
+            su.init_all_stock_data(conn)
             continue
 
     conn.close()

@@ -12,7 +12,7 @@ from stock_def import StockPrice
 FORMAT_DATE = '%Y-%m-%d'
 
 def prepare_fred_init_data(conn, date_from, date_to):
-    fred = ht.get_fred_data_from_server("UNRATE", date_from, date_to)
+    fred = hs.get_fred_data_from_server("UNRATE", date_from, date_to)
     
     print("prepare_fred")
     print(len(fred))
@@ -23,19 +23,16 @@ def prepare_fred_init_data(conn, date_from, date_to):
     
     print("Inserting data " + str(len(result)))
     hdb.insert_stock_data(conn, result)
-    
-    
+
 def prepare_initial_table(conn, code_list, date_from, date_to):
     #hdb.create_table(conn)
     #hdb.clean_all_stock_price_table(conn)
     hdb.create_all_tables(conn)
     edate_str = date_to.strftime(FORMAT_DATE)
-
     sdate_str = date_from.strftime(FORMAT_DATE)
 
     print("{} from  ==> {} to".format(sdate_str, edate_str))
     cnt = 1
-    print(code_list)
     for code in code_list:
         result_list = hs.get_stock_data_from_server(code, date_from, date_to)
         hdb.insert_stock_data(conn, result_list)
@@ -160,15 +157,6 @@ def init_current_stock(conn):
 #log_sell_stock(conn, '068270', 380000, 999)
 
 if __name__ == "__main__":
-    # append action allows to group repeating
-    # options
-    #my_codes = korea_stocks_info.korea_stock_all
-    #my_codes = code_list.my_code_list
-    #my_codes = code_list.my_code_list_t.keys()
-    #my_codes = korea_stocks_info.korea_stock_etf
-    
-    
-    
    
 #     parser = argparse.ArgumentParser()
        
@@ -187,28 +175,20 @@ if __name__ == "__main__":
 #     datet = datetime(int(tokens[0]), int(tokens[1]), int(tokens[2]))
 
     conn = hdb.connect_db("stock_all.db")
-    #hdb.init_stock_basic_info_table(conn, 'stock_basic_info_20210307.csv')
-    #print(hdb.get_stock_names(conn, '015860'))
-    
-
     ##################To fill the stock price list use this block##############################
-    #my_codes = hdb.get_stock_code_list_interested(conn)
-    # my_codes = ['VT', 'DBC', 'BCI', 'IAU', 'EDV', 'LTPZ', 'VCLT', 'EMLC', 'VWOB']
-    # my_codes = ['TLT']
-    my_codes = ['VIG','QQQ','VTI','VOO','IVV','EFA','SPY', 'QLD', 'TQQQ', 'FNGU', 'DDM', 'SOXL', 'SSO', 'UPRO','123320', '233160', '243880', '122630', '306950', '233740', '102110', '232080', '139260', '229720', '226980', '229200', '102110', '114820']
+    #my_codes = ['VIG','QQQ','VTI','VOO','IVV','EFA','SPY', 'QLD', 'TQQQ', 'FNGU', 'DDM', 'SOXL', 'SSO', 'UPRO','123320', '233160', '243880', '122630', '306950', '233740', '102110', '232080', '139260', '229720', '226980', '229200', '102110', '114820']
     #my_codes = ['VT', 'DBC', 'IAU', 'TLT', 'LTPZ', 'VCLT', 'EMLC']
     #my_codes = ['US500', 'UNRATE']
     #my_codes = ['IWD', 'GLD', 'IEF', 'QQQ', 'SHY', 'SSO', 'UBT', 'UGL', 'TQQQ']
- 
+    from code_list import my_codes
+
     tokens = '2000-01-01'.split("-")
     datef = datetime(int(tokens[0]), int(tokens[1]), int(tokens[2]))
-    tokens ='2021-07-30'.split("-")
+    tokens ='2021-08-30'.split("-")
     datet = datetime(int(tokens[0]), int(tokens[1]), int(tokens[2]))
     #prepare_initial_table(conn, my_codes, datef, datet)
-    prepare_fred_init_data(conn, datef, datet)
+    #prepare_fred_init_data(conn, datef, datet)
     #init_fund_list_db(conn)
-
-
 
     ###########################################################################################
     
@@ -237,8 +217,3 @@ if __name__ == "__main__":
     #     prepare_initial_table(conn, update_codes, datef, datet)
     
     conn.close()
- 
-        
-        
-        
-        

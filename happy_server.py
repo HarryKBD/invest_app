@@ -44,3 +44,26 @@ def get_stock_data_from_server(code, s_datetime, e_datetime):
 
     return price_days
 
+def get_fred_data_from_server(code, s_datetime, e_datetime):
+    sdate_str = s_datetime.strftime(FORMAT_DATE)
+    edate_str = e_datetime.strftime(FORMAT_DATE)
+    print("Connecting server to get data code: {}  from: {}  to: {} ".format(code, sdate_str, edate_str))
+    ret = []
+    while True:
+        df = fdr.DataReader(code, sdate_str, edate_str, data_source='fred')
+        if len(df) == 0:
+            #print("No more data for code : " + code)
+            break
+        data_list = df[code]
+
+        idx = df.index
+        i = 0
+        for value in data_list:
+            last_date =  idx[i].to_pydatetime()
+            print(f'{last_date} => {value}')
+            ret.append((last_date, value))
+            i += 1
+        
+        break
+
+    return ret
