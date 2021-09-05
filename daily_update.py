@@ -10,6 +10,7 @@ def update_stock_daily_db(conn):
     t = datetime.datetime.now()
     today_str = ht.datetime_to_str(t)
     for c in code_list.my_codes:
+    for c in cod:
         price = su.update_stock_db_today(conn, c)
         if price != None:
             log.w('today: ' + today_str + ' Updating ' + c + '  ' + str(price))

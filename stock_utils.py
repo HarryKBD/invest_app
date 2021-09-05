@@ -6,27 +6,23 @@ import init_stock_db as indb
 
 def update_stock_db_today(conn, code):
     today = datetime.datetime.now()
-    if ht.is_working_day(today):
-        l = hs.get_stock_data_from_server(code, today, today)
-        if len(l) != 1:
-            print(f'code: {code} => there is no data for today. very strange')
-            return None
-        else:
-            hdb.insert_stock_data(conn, l)
-    else:
-        print(f'code: {code} => today is not a working day')
+    #today = ht.to_datetime('2021-08-12')
+    l = hs.get_stock_data_from_server(code, today, today)
+    if len(l) != 1:
+        #print(f'code: {code} => there is no data for today. very strange')
         return None
+    else:
+        print(f'{code} ==> {l[0].get_date()} value: {l[0].get_close()}')
+        hdb.insert_stock_data(conn, l)
 
     return l[0].get_close()
 
 def get_stock_trend(conn, code, from_date_str, to_date_str = None):
     today = datetime.datetime.now()
     #default
-    if to_date_str == None and ht.is_working_day(today): #get date from server
+    if to_date_str == None: #get date from server
         l = hs.get_stock_data_from_server(code, today, today)
-        if len(l) != 1:
-            print("there is no data for today. very strange")
-        else:
+        if len(l) == 1:
             hdb.insert_stock_data(conn, l)
 
     end_date_str = to_date_str

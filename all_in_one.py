@@ -86,14 +86,14 @@ def create_stock_status(conn, code, buy_date, buy_price, buy_cnt, fund_name, tod
         t = today
         
     if not is_working_day(t):
-        log.w("Today {} is not a working day. pass".format(t.strftime(FORMAT_DATE)))
+        print("Today {} is not a working day. pass".format(t.strftime(FORMAT_DATE)))
         return None, 'HOLIDAY'
     
     #first update latest price in the db
-    log.w("Getting today's data from server and insert into database. today is : " + t.strftime(FORMAT_DATE))
+    print("Getting today's data from server and insert into database. today is : " + t.strftime(FORMAT_DATE))
     l = get_stock_data_from_server(code, t, t)
     if len(l) != 1:
-        log.w("There is no data for today..very strange....")
+        print("There is no data for today..very strange....")
         return None, 'NO_DATA_FROM_SERVER'
 
     todayp = l[0].get_close()
@@ -176,7 +176,7 @@ def show_market_trend(conn):
     codes = code_list.my_interested_codes
     
     for c in codes:
-        high, low, latest = su.get_stock_trend(conn, c, '2019-01-01')
+        high, low, latest = su.get_stock_trend(conn, c, '2018-01-01')
         gap_from_high = (latest - high)/high * 100.0
         gap_from_low = (latest - low)/low * 100.0
         print(f'{c: <7} =>  High: {high: > 10.1f} ({gap_from_high: > 7.1f} %)     LOW: {low: > 7.1f} ({gap_from_low: > 7.1f} %), Cur: {latest: > 8.1f} ')
@@ -185,6 +185,7 @@ if __name__ == "__main__":
     conn = hdb.connect_db("stock_all.db")
     fund_stocks = []
     fund_list = ['HighPerf_LowVal', 'SuperQuant', 'NewMagic_Small20']
+    print("Connected to db")
 
     while True:
         line = input('Prompt ("quit" to quit): ')
