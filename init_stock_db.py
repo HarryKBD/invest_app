@@ -182,12 +182,12 @@ if __name__ == "__main__":
     #my_codes = ['IWD', 'GLD', 'IEF', 'QQQ', 'SHY', 'SSO', 'UBT', 'UGL', 'TQQQ']
     from code_list import my_codes
 
-    tokens = '2000-01-01'.split("-")
+    tokens = '2021-01-01'.split("-")
     datef = datetime(int(tokens[0]), int(tokens[1]), int(tokens[2]))
-    tokens ='2021-08-30'.split("-")
+    tokens ='2021-12-30'.split("-")
     datet = datetime(int(tokens[0]), int(tokens[1]), int(tokens[2]))
-    #prepare_initial_table(conn, my_codes, datef, datet)
-    #prepare_fred_init_data(conn, datef, datet)
+    prepare_initial_table(conn, my_codes, datef, datet)
+    prepare_fred_init_data(conn, datef, datet)
     #init_fund_list_db(conn)
 
     ###########################################################################################

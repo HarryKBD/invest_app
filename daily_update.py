@@ -7,15 +7,14 @@ import init_stock_db as indb
 
 
 def update_stock_daily_db(conn):
-    t = datetime.datetime.now()
-    today_str = ht.datetime_to_str(t)
+    #code_l = ['QQQ', 'QLD', '302440', '285130', '024090', 'RPAR', 'UPRO']
+    #for c in code_l:
     for c in code_list.my_codes:
-    for c in cod:
-        price = su.update_stock_db_today(conn, c)
+        price, dd = su.update_stock_db_today(conn, c)
         if price != None:
-            log.w('today: ' + today_str + ' Updating ' + c + '  ' + str(price))
+            log.w('today: ' + dd + ' Updating ' + c + '  ' + str(price))
         else:
-            log.w('today: ' + today_str + ' No update ' + c)
+            log.w('today: ' + dd + ' No update ' + c)
 
 if __name__ == '__main__':
 

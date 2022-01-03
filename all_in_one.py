@@ -216,7 +216,7 @@ if __name__ == "__main__":
             continue
         if line  == '100':
             print("Updating all stock db for a year")
-            su.init_all_stock_data_by_days(conn, 30)
+            su.init_all_stock_data_by_days(conn, 400)
             continue
         if line == '101':
             print("Updating all database")

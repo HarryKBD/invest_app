@@ -39,7 +39,17 @@ class Logger:
             self.fd_opened = False
             self.fd.close()
 
+def is_same_month(d1, d2):
+    tokens = d1.split("-")
+    mon1 = int(tokens[1])
 
+    tokens = d2.split("-")
+    mon2 = int(tokens[1])
+
+    if mon1 == mon2:
+        return True
+    else:
+        return False
 
 def get_year(dd):
     tokens =  dd.split("-")
