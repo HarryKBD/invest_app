@@ -48,6 +48,7 @@ def get_unrate_status(conn, base_date):
         return False
     
 def get_snp_status(conn, base_date):
+    #avg, curr_price, curr_date = get_moving_avg(conn, 'US500', base_date, 200)
     avg, curr_price, curr_date = get_moving_avg(conn, 'SPY', base_date, 200)
     if avg < 0:
         return None
@@ -91,7 +92,20 @@ def get_moving_avg(conn, code, base_date, days=100):
     #print(f'Average is : {avg:.2f} cnt: {add_cnt}')
     return avg, price_list[-1], fdate[-1]
         
-        
+   
+def get_eco_status(conn, dd, log=False):
+    un_status = get_unrate_status(conn, dd)
+    snp_status = get_snp_status(conn, dd)
+    if log:
+        print(f'unemployeed rate: {un_status}  snp status: {snp_status}')
+    if un_status == None or snp_status == None:
+        print("Error........")
+        return None
+    if un_status == False and snp_status == False:
+        #print(f'{ht.datetime_to_str(test_date)} ==> UNRATE:{un_status}  S&P:{snp_status}')
+        return False
+    else:
+        return True        
 
     
 if __name__ == '__main__':

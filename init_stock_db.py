@@ -15,7 +15,6 @@ def prepare_fred_init_data(conn, date_from, date_to):
     fred = hs.get_fred_data_from_server("UNRATE", date_from, date_to)
     
     print("prepare_fred")
-    print(len(fred))
     result = []
     for last_date, price in fred:
         s = StockPrice("UNRATE", last_date, float(price), float(price), float(price),  float(price), int(price), 0)
@@ -34,6 +33,7 @@ def prepare_initial_table(conn, code_list, date_from, date_to):
     print("{} from  ==> {} to".format(sdate_str, edate_str))
     cnt = 1
     for code in code_list:
+        print(f'Code => {code}')
         result_list = hs.get_stock_data_from_server(code, date_from, date_to)
         hdb.insert_stock_data(conn, result_list)
         print("Getting {} data:  {} / {} ==> cnt: {}".format(code, str(cnt), str(len(code_list)), str(len(result_list))))
@@ -179,12 +179,12 @@ if __name__ == "__main__":
     #my_codes = ['VIG','QQQ','VTI','VOO','IVV','EFA','SPY', 'QLD', 'TQQQ', 'FNGU', 'DDM', 'SOXL', 'SSO', 'UPRO','123320', '233160', '243880', '122630', '306950', '233740', '102110', '232080', '139260', '229720', '226980', '229200', '102110', '114820']
     #my_codes = ['VT', 'DBC', 'IAU', 'TLT', 'LTPZ', 'VCLT', 'EMLC']
     #my_codes = ['US500', 'UNRATE']
-    #my_codes = ['IWD', 'GLD', 'IEF', 'QQQ', 'SHY', 'SSO', 'UBT', 'UGL', 'TQQQ']
+    my_codes = ['IWD', 'GLD', 'IEF', 'QQQ', 'SHY', 'SSO', 'UBT', 'UGL', 'TQQQ', 'TMF', 'QLD']
     from code_list import my_codes
 
     tokens = '2021-01-01'.split("-")
     datef = datetime(int(tokens[0]), int(tokens[1]), int(tokens[2]))
-    tokens ='2021-12-30'.split("-")
+    tokens ='2022-01-02'.split("-")
     datet = datetime(int(tokens[0]), int(tokens[1]), int(tokens[2]))
     prepare_initial_table(conn, my_codes, datef, datet)
     prepare_fred_init_data(conn, datef, datet)

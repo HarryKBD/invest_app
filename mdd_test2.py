@@ -259,21 +259,11 @@ def run_port_item_test():
     assertEqual(ret, 8920)
     print("Passed all test cases")
 
-
-
-
-if __name__ == '__main__':
-    #run_port_item_test()
-    conn = hdb.connect_db("./stock_all.db")
-    start_date = '2018-09-01'
-    end_date = '2020-12-30'
-    #end_date = '2015-03-05'
+def test_mdd(conn, start_date, end_date, code, cash_ratio, laa_bad_sell_all):
     
-    today = datetime.now()
     sdate = ht.to_datetime(start_date)
     edate = ht.to_datetime(end_date)
-    
-    c = 'QLD'
+    c = code 
     valid, dd, price = hdb.get_stock_data_from_db(conn, c, sdate, edate)
     print(f'{c} => len {len(dd)}')
     if valid == False:
@@ -294,14 +284,14 @@ if __name__ == '__main__':
     in_bad_state = False
     cur_laa_status = False
 
-    for_sure_cnt = 4
+    for_sure_cnt = 5
     recover_check_cnt = 0
     bad_check_cnt = 0
 
     target_sell_price = 0
-    account = BlAccount(100000, 0, 0.02, 0.02)
-    laa_bad_sell_all = False
-    monthly_rebalance = False
+    account = BlAccount(100000, cash_ratio, 0.02, 0.02)
+    #laa_bad_sell_all = False  #param
+    monthly_rebalance = True
     monthly_rebalance_hold = False
     buy_more_when_laa_bad = True
     peak_rebalance = True
@@ -348,13 +338,16 @@ if __name__ == '__main__':
                     in_bad_state = False
                     recover_check_cnt = 0
                     bad_check_cnt = 0
+                    if buy_more_when_laa_bad == False:
+                        account.rebalance(p, d)
+
             else:
                 recover_check_cnt = 0
                 #print(f'{d} --> Reset Recover check cnt')
 
         if p > peak:
             #print(f'{d} ==> {p: .3f} cur_down: {cur_down: .3f} this_mdd: {this_mdd: .3f} ({this_mdd_date}) last_peak: {last_peak_date} max_mdd: {max_mdd: .2f} ({max_mdd_date}) acc_worst: {account.get_worst_ratio(): .2f}')
-            if buy_more_when_laa_bad and peak_rebalance and peak_rebalance_hold == False and p > target_sell_price:
+            if buy_more_when_laa_bad and peak_rebalance and peak_rebalance_hold == False and p >= target_sell_price:
                 account.rebalance(p, d)
                 monthly_rebalance_hold = False #we can continue montly rebalance
                 peak_rebalance_hold = True
@@ -376,7 +369,7 @@ if __name__ == '__main__':
                print(f'{d} MORE BUY price({p: .2f}) NEW This MDD==> {p: .3f} _mdd: {this_mdd: .3f} buy more: {cnt}')
                monthly_rebalance_hold = True
                peak_rebalance_hold = False
-               target_sell_price = peak * 1.4
+               target_sell_price = peak * 1
             if this_mdd > max_mdd:
                 max_mdd = this_mdd
                 max_mdd_date = d
@@ -385,7 +378,37 @@ if __name__ == '__main__':
         account.stat(p, d)
         #account.print_status(p)
 
-    print(f'{d} ==> {p: .3f} cur_down: {cur_down: .3f} this_mdd: {this_mdd: .3f} ({this_mdd_date}) last_peak: {last_peak_date} max_mdd: {max_mdd: .2f} ({max_mdd_date}) acc_worst: {account.get_worst_ratio(): .2f}')
-    account.print_status(p, d)
-    account.print_value(p, d)
+    print(f'RESULT: {start_date} - {end_date} {c} => {account.get_value_string(p)} {account.get_status_string(p)}')
+
+
+
+if __name__ == '__main__':
+    #run_port_item_test()
+    conn = hdb.connect_db("./stock_all.db")
+    start_date = '2018-09-01'
+    end_date = '2020-12-30'
+    code = 'QLD'
+    cash_ratio = 0 
+    laa_bad_sell_all = False
+
+    #cash_ratio_list = [0, 30, 40, 50, 60, 70]
+    cash_ratio_list = [0, 50]
+    #code_list = ['QQQ', 'SPY', 'QLD', 'SSO', 'SOXL', 'UPRO', 'TQQQ']
+    code_list = ['TQQQ']
+    laa_bad_sell_all_list= [False]
+    #laa_bad_sell_all_list= [True]
+    #date_list = [('2018-09-01', '2020-12-30'), ('2007-01-01', '2021-12-30'), ('2015-01-01', '2021-12-31'),  ('2011-01-01', '2020-12-31')]
+    date_list = [('2011-01-01', '2012-12-31')]
+
+
+    for dd_pair in date_list:
+        start_date = dd_pair[0]
+        end_date = dd_pair[1]
+        for code in code_list:
+            for cash_ratio in cash_ratio_list:
+                for laa_bad_sell_all in laa_bad_sell_all_list:
+                    print(f'Testing - {start_date} - {end_date} : {code}  {cash_ratio} {laa_bad_sell_all}')
+                    test_mdd(conn, start_date, end_date, code, cash_ratio, laa_bad_sell_all)
+                    print(f'-------------------------------- Done ---------------------------------------')
+
     conn.close()

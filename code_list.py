@@ -11,7 +11,7 @@ super_quant_code = ['035610','008420','005810','006200','048470','002690','01748
 
 
 my_interested_codes = ['DOW', 'DIA', 'VIG','QQQ','VTI','VOO','IVV','EFA','SPY', 'QLD', 'TQQQ', 'FNGU', 'DDM', 'SOXL', 
-                        'SSO', 'UPRO', '123320', '233160', 'KS11', 'KQ11', 'CSI300', 'HSI']
+                        'US500','SSO', 'UPRO', '123320', '233160', 'KS11', 'KQ11', 'HSI']
 
 
 my_codes = new_magic_small_code + low_value_code + super_quant_code + my_interested_codes

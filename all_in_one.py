@@ -21,6 +21,35 @@ import code_list
 cal = SouthKorea()
 fund_stocks_all = []
 
+class Logger:
+    def __init__(self, fname):
+        now = datetime.now()
+        self.log_file = hdb.MY_HOME + fname + '_log_' + now.strftime("%m%d") + '.txt'
+        self.log_level = 5
+        self.fd_opened = False
+        
+    def enable(self):
+        self.fd = open(self.log_file, "a")
+        self.fd_opened = True
+        
+    def w(self, msg, cprint = False, level=1):
+        if self.log_level > level:
+            self.fd.write(datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f") + "  :  " + msg + "\n")
+        if cprint:
+            print(msg)
+        
+    def set_level(self, level):
+        self.log_level = level
+        
+    def disable(self):
+        if self.fd_opened:
+            self.fd_opened = False
+            self.fd.close()
+
+#global log
+log = Logger("flow")
+log.enable()    
+
 
 def is_working_day(t):
     return cal.is_working_day(date(t.year, t.month, t.day))
@@ -86,14 +115,14 @@ def create_stock_status(conn, code, buy_date, buy_price, buy_cnt, fund_name, tod
         t = today
         
     if not is_working_day(t):
-        print("Today {} is not a working day. pass".format(t.strftime(FORMAT_DATE)))
+        log.w("Today {} is not a working day. pass".format(t.strftime(FORMAT_DATE)))
         return None, 'HOLIDAY'
     
     #first update latest price in the db
-    print("Getting today's data from server and insert into database. today is : " + t.strftime(FORMAT_DATE))
+    log.w("Getting today's data from server and insert into database. today is : " + t.strftime(FORMAT_DATE))
     l = get_stock_data_from_server(code, t, t)
     if len(l) != 1:
-        print("There is no data for today..very strange....")
+        log.w("There is no data for today..very strange....")
         return None, 'NO_DATA_FROM_SERVER'
 
     todayp = l[0].get_close()
@@ -176,11 +205,19 @@ def show_market_trend(conn):
     codes = code_list.my_interested_codes
     
     for c in codes:
-        high, low, latest = su.get_stock_trend(conn, c, '2018-01-01')
+        high, low, latest = su.get_stock_trend(conn, c, '2019-01-01')
         gap_from_high = (latest - high)/high * 100.0
         gap_from_low = (latest - low)/low * 100.0
         print(f'{c: <7} =>  High: {high: > 10.1f} ({gap_from_high: > 7.1f} %)     LOW: {low: > 7.1f} ({gap_from_low: > 7.1f} %), Cur: {latest: > 8.1f} ')
  
+def show_mdd_status(conn):
+    su.get_current_mdd(conn, 'TQQQ', '2015-01-01')
+    su.get_current_mdd(conn, 'QLD', '2015-01-01')
+    su.get_current_mdd(conn, 'QQQ', '2015-01-01')
+    su.get_current_mdd(conn, 'SPY', '2015-01-01')
+    su.get_current_mdd(conn, 'SOXL', '2015-01-01')
+    su.get_current_mdd(conn, 'UPRO', '2015-01-01')
+
 if __name__ == "__main__":
     conn = hdb.connect_db("stock_all.db")
     fund_stocks = []
@@ -214,6 +251,8 @@ if __name__ == "__main__":
         if line == '6':
             show_market_trend(conn)
             continue
+        if line == '7':
+            show_mdd_status(conn)
         if line  == '100':
             print("Updating all stock db for a year")
             su.init_all_stock_data_by_days(conn, 400)

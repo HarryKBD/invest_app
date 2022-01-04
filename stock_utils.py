@@ -2,6 +2,7 @@ import happy_utils as ht
 import happy_server as hs
 import hdb
 import datetime
+from datetime import datetime
 import init_stock_db as indb
 from pytz import timezone
 
@@ -64,11 +65,49 @@ def init_all_stock_data(conn):
     edate = datetime.datetime.now()
     indb.prepare_initial_table(conn, my_codes, sdate, edate)
 
+def get_mdd_values(conn, code, start_date, end_date=None):
+    sdate = ht.to_datetime(start_date)
+    if end_date == None:
+        edate = datetime.now()
+    else:
+        edate = ht.to_datetime(end_date)
+    
+    valid, dd, price = hdb.get_stock_data_from_db(conn, code, sdate, edate)
+    print(f'{code} => len {len(dd)}')
+    if valid == False:
+        return None
+    last_peak_date = '0000-00-00'
+    all_max_mdd_date = '0000-00-00'
+    all_max_mdd = 0
+    peak = -100
+    this_max_mdd = 0
+    this_max_mdd_date = '0000-00-00'
+    for d, p in zip(dd, price):
+        if d == '2016-02-27':
+            continue
+        if p > peak:
+            peak = p
+            last_peak_date = d
+            this_max_mdd = 0
+            #print(f'{d} ==> {p: .3f} NEW Peak')
+
+        cur_down = (peak - p)/peak * 100.0
+
+        if cur_down > this_max_mdd:
+            this_max_mdd = cur_down
+            this_max_mdd_date = d
+            if this_max_mdd > all_max_mdd:
+                all_max_mdd = this_max_mdd
+                all_max_mdd_date = d
+    print(f'{code}  {d} ==> {p: .3f} cur_down: {cur_down: .3f} this_mdd: {this_max_mdd: .3f} ({this_max_mdd_date}) last_peak: {last_peak_date} all_max_mdd: {all_max_mdd: .2f} ({all_max_mdd_date}) ')
+
+    return cur_down, d, this_max_mdd, this_max_mdd_date, all_max_mdd, all_max_mdd_date
 
 
-if __name__ == '__main__':
-    conn = hdb.connect_db("stock_all.db")
-    update_stock_db_today(None, '302440')
-    update_stock_db_today(None, 'QQQ')
-    conn.close()
+def get_current_mdd(conn, code, start_date, end_date=None):
+    cur_date, cur_down, this_max_mdd, this_max_mdd_date, all_max_mdd, all_max_mdd_date = get_mdd_values(conn, code, start_date, end_date)
+    return cur_down, cur_date
 
+def get_this_cycle_max_mdd(conn, code, start_date, end_date=None):
+    cur_date, cur_down, this_max_mdd, this_max_mdd_date, all_max_mdd, all_max_mdd_date = get_mdd_values(conn, code, start_date, end_date)
+    return this_max_mdd, this_max_mdd_date
