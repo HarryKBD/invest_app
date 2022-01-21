@@ -16,6 +16,7 @@ from happy_utils import FORMAT_DATE
 import stock_utils as su
 import laa
 import code_list
+import json
 
 
 cal = SouthKorea()
@@ -210,6 +211,28 @@ def show_market_trend(conn):
         gap_from_low = (latest - low)/low * 100.0
         print(f'{c: <7} =>  High: {high: > 10.1f} ({gap_from_high: > 7.1f} %)     LOW: {low: > 7.1f} ({gap_from_low: > 7.1f} %), Cur: {latest: > 8.1f} ')
  
+
+def create_server_response(type):
+    #str = '{"mdd": {"TQQQ" : 20.3, "QLD" : 10.2, "QQQ"}, "laa" : { "A": "True", "B": "True"}'
+
+    resp = json.loads('{ }')
+
+    resp["mdd"] = json.loads('{}')
+
+    resp["mdd"]["TQQQ"] = 20.3
+    resp["mdd"]["QLD"] = 10.3
+    resp["mdd"]["QQQ"] = 5.3
+
+    resp["laa"] = json.loads('{}')
+    resp["laa"]["AItem"] = "True"
+    resp["laa"]["BItem"] = "False"
+
+    str = json.dumps(resp)
+
+    return str
+
+
+
 def show_mdd_status(conn):
     su.get_current_mdd(conn, 'TQQQ', '2015-01-01')
     su.get_current_mdd(conn, 'QLD', '2015-01-01')
@@ -255,7 +278,7 @@ if __name__ == "__main__":
             show_mdd_status(conn)
         if line  == '100':
             print("Updating all stock db for a year")
-            su.init_all_stock_data_by_days(conn, 400)
+            su.init_all_stock_data_by_days(conn, 40000)
             continue
         if line == '101':
             print("Updating all database")

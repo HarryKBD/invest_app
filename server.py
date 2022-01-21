@@ -1,5 +1,6 @@
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from json import dumps
+import all_in_one as ut
 
 
 #http://192.168.0.44:8081/geek9?type=carousell
@@ -35,7 +36,7 @@ class RequestHandler(BaseHTTPRequestHandler):
             print('carousell')
         elif type == 'merci':
             print('merci')
-        response = {"status": paramDic}
+        response = ut.create_server_response('all')
         self.send_dict_response(response)
 
     def do_GET(self):

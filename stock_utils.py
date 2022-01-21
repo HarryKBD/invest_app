@@ -2,7 +2,6 @@ import happy_utils as ht
 import happy_server as hs
 import hdb
 import datetime
-from datetime import datetime
 import init_stock_db as indb
 from pytz import timezone
 
@@ -68,12 +67,12 @@ def init_all_stock_data(conn):
 def get_mdd_values(conn, code, start_date, end_date=None):
     sdate = ht.to_datetime(start_date)
     if end_date == None:
-        edate = datetime.now()
+        edate = datetime.datetime.now()
     else:
         edate = ht.to_datetime(end_date)
     
     valid, dd, price = hdb.get_stock_data_from_db(conn, code, sdate, edate)
-    print(f'{code} => len {len(dd)}')
+    print(f'{code} => len {len(dd)} {start_date} - {ht.datetime_to_str(edate)}')
     if valid == False:
         return None
     last_peak_date = '0000-00-00'
