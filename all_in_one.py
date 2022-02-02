@@ -212,23 +212,57 @@ def show_market_trend(conn):
         print(f'{c: <7} =>  High: {high: > 10.1f} ({gap_from_high: > 7.1f} %)     LOW: {low: > 7.1f} ({gap_from_low: > 7.1f} %), Cur: {latest: > 8.1f} ')
  
 
-def create_server_response(type):
-    #str = '{"mdd": {"TQQQ" : 20.3, "QLD" : 10.2, "QQQ"}, "laa" : { "A": "True", "B": "True"}'
+def create_server_response(type=None):
 
-    resp = json.loads('{ }')
+    resp_str = ( '{"mdd_stocks" : [ {"code" : "TQQQ", '
+                             ' "update" : "2021-12-31", '
+                             ' "price" : "33.23", '
+                             ' "cur_down" : "32", '
+                             ' "this_max_mdd_date" : "2021-11-01", '
+                             ' "this_max_mdd" : "50.22" '
+                             ' }, '
+                             ' {"code" : "QQQ", '
+                             ' "update" : "2021-12-31", '
+                             ' "price" : "33.23", '
+                             ' "cur_down" : "32", '
+                             ' "this_max_mdd_date" : "2021-11-01", '
+                             ' "this_max_mdd" : "50.22" '
+                             '} ], '
+           ' "laa": { "labor" : "True", "Spy" : "False" } ' 
+           ' } ')
 
-    resp["mdd"] = json.loads('{}')
+    conn = hdb.connect_db("stock_all.db")
 
-    resp["mdd"]["TQQQ"] = 20.3
-    resp["mdd"]["QLD"] = 10.3
-    resp["mdd"]["QQQ"] = 5.3
+    code_list = ['TQQQ', 'QLD', 'QQQ', 'SPY', 'SOXL', 'UPRO']
+    start_date = '2015-01-01'
 
-    resp["laa"] = json.loads('{}')
-    resp["laa"]["AItem"] = "True"
-    resp["laa"]["BItem"] = "False"
+    resp = json.loads(resp_str)
+
+#gather mdd stock status
+    mdd_list = []
+    for c in code_list:
+        cur_date, price, cur_down, this_max_mdd, this_max_mdd_date, all_max_mdd, all_max_mdd_date = su.get_mdd_values(conn, c, start_date)
+        str = (f' "code":"{c}", "update":"{cur_date}", "price":"{price: .2f}", "cur_down":"{cur_down: .2f}",'
+               f' "this_max_mdd_date":"{this_max_mdd_date}", "this_max_mdd":"{this_max_mdd: .2f}"' )
+        str = '{ ' + str + '}'
+        mdd_list.append(str)
+        #print(str)
+
+    resp["mdd_stocks"] = mdd_list
+
+#gather laa status
+    now = datetime.now()
+    un_status = laa.get_unrate_status(conn, now)
+    snp_status = laa.get_snp_status(conn, now)
+    un_status_str = f'{un_status}'
+    snp_status_str = f'{snp_status}'
+
+    resp["laa"]["labor"] = un_status_str
+    resp["laa"]["Spy"] = snp_status_str
 
     str = json.dumps(resp)
-
+    print(str)
+    conn.close()
     return str
 
 

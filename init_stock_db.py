@@ -182,9 +182,9 @@ if __name__ == "__main__":
     my_codes = ['IWD', 'GLD', 'IEF', 'QQQ', 'SHY', 'SSO', 'UBT', 'UGL', 'TQQQ', 'TMF', 'QLD']
     from code_list import my_codes
 
-    tokens = '2021-01-01'.split("-")
+    tokens = '2000-01-01'.split("-")
     datef = datetime(int(tokens[0]), int(tokens[1]), int(tokens[2]))
-    tokens ='2022-01-02'.split("-")
+    tokens ='2022-02-28'.split("-")
     datet = datetime(int(tokens[0]), int(tokens[1]), int(tokens[2]))
     prepare_initial_table(conn, my_codes, datef, datet)
     prepare_fred_init_data(conn, datef, datet)

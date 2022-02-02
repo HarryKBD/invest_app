@@ -100,13 +100,13 @@ def get_mdd_values(conn, code, start_date, end_date=None):
                 all_max_mdd_date = d
     print(f'{code}  {d} ==> {p: .3f} cur_down: {cur_down: .3f} this_mdd: {this_max_mdd: .3f} ({this_max_mdd_date}) last_peak: {last_peak_date} all_max_mdd: {all_max_mdd: .2f} ({all_max_mdd_date}) ')
 
-    return cur_down, d, this_max_mdd, this_max_mdd_date, all_max_mdd, all_max_mdd_date
+    return d, p, cur_down, this_max_mdd, this_max_mdd_date, all_max_mdd, all_max_mdd_date
 
 
 def get_current_mdd(conn, code, start_date, end_date=None):
-    cur_date, cur_down, this_max_mdd, this_max_mdd_date, all_max_mdd, all_max_mdd_date = get_mdd_values(conn, code, start_date, end_date)
+    cur_date, price, cur_down, this_max_mdd, this_max_mdd_date, all_max_mdd, all_max_mdd_date = get_mdd_values(conn, code, start_date, end_date)
     return cur_down, cur_date
 
 def get_this_cycle_max_mdd(conn, code, start_date, end_date=None):
-    cur_date, cur_down, this_max_mdd, this_max_mdd_date, all_max_mdd, all_max_mdd_date = get_mdd_values(conn, code, start_date, end_date)
+    cur_date, price, cur_down, this_max_mdd, this_max_mdd_date, all_max_mdd, all_max_mdd_date = get_mdd_values(conn, code, start_date, end_date)
     return this_max_mdd, this_max_mdd_date
