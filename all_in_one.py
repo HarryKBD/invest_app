@@ -261,6 +261,15 @@ def create_server_response(type=None):
     resp["laa"]["Spy"] = snp_status_str
 
     str = json.dumps(resp)
+
+    import re
+    str = re.sub(r"\\","", str);
+    str = re.sub(" ", "", str);
+    #str = str.replace('["', '[');
+    #str = str.replace('"]', ']');
+    str = str.replace('}"', '}');
+    str = str.replace('"{', '{');
+
     print(str)
     conn.close()
     return str
