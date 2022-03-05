@@ -233,7 +233,7 @@ def create_server_response(type=None):
 
     conn = hdb.connect_db("stock_all.db")
 
-    code_list = ['TQQQ', 'QLD', 'QQQ', 'SPY', 'SOXL', 'UPRO']
+    code_list = ['TQQQ', 'QLD', 'QQQ', 'SPY', 'SOXL', 'UPRO', 'VTI', 'TMF', 'TLT', 'RPAR', 'KS11', 'KQ11', '409820']
     start_date = '2015-01-01'
 
     resp = json.loads(resp_str)
@@ -241,9 +241,13 @@ def create_server_response(type=None):
 #gather mdd stock status
     mdd_list = []
     for c in code_list:
-        cur_date, price, cur_down, this_max_mdd, this_max_mdd_date, all_max_mdd, all_max_mdd_date = su.get_mdd_values(conn, c, start_date)
+        cur_date, price, cur_down, this_max_mdd, this_max_mdd_date, all_max_mdd, \
+        all_max_mdd_date, last_peak, last_peak_date = su.get_mdd_values(conn, c, start_date)
+
         str = (f' "code":"{c}", "update":"{cur_date}", "price":"{price: .2f}", "cur_down":"{cur_down: .2f}",'
-               f' "this_max_mdd_date":"{this_max_mdd_date}", "this_max_mdd":"{this_max_mdd: .2f}"' )
+               f' "this_max_mdd_date":"{this_max_mdd_date}", "this_max_mdd":"{this_max_mdd: .2f}",' 
+               f' "all_max_mdd_date":"{all_max_mdd_date}", "all_max_mdd":"{all_max_mdd: .2f}",' 
+               f' "last_peak_date":"{last_peak_date}", "last_peak":"{last_peak: .2f}"')
         str = '{ ' + str + '}'
         mdd_list.append(str)
         #print(str)

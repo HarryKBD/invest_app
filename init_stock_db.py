@@ -179,8 +179,9 @@ if __name__ == "__main__":
     #my_codes = ['VIG','QQQ','VTI','VOO','IVV','EFA','SPY', 'QLD', 'TQQQ', 'FNGU', 'DDM', 'SOXL', 'SSO', 'UPRO','123320', '233160', '243880', '122630', '306950', '233740', '102110', '232080', '139260', '229720', '226980', '229200', '102110', '114820']
     #my_codes = ['VT', 'DBC', 'IAU', 'TLT', 'LTPZ', 'VCLT', 'EMLC']
     #my_codes = ['US500', 'UNRATE']
-    my_codes = ['IWD', 'GLD', 'IEF', 'QQQ', 'SHY', 'SSO', 'UBT', 'UGL', 'TQQQ', 'TMF', 'QLD']
-    from code_list import my_codes
+    my_codes = ['IWD', 'GLD', 'IEF', 'SHY', 'DOW', 'DIA', 'VIG','QQQ','VTI','VOO','IVV','EFA','SPY', 'QLD', 'TQQQ', 'FNGU', 'DDM', 'SOXL', \
+                        'US500','SSO', 'UBT', 'UGL',  'UPRO', '123320', '233160', 'KS11', 'KQ11', 'HSI', 'TMF', 'TLT', 'RPAR', '409820']
+    #from code_list import my_codes
 
     tokens = '2000-01-01'.split("-")
     datef = datetime(int(tokens[0]), int(tokens[1]), int(tokens[2]))

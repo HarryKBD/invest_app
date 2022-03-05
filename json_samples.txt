@@ -1,0 +1,26 @@
+
+
+{
+  "fund_name":"Samsung Stock IRP1",
+  "fund_meta":"Write your additional strings",
+  "total_price":"1000000",
+  "cur_price":"1500000",
+  "profit_rate":"50",
+  "stocks":[
+    {"name":"Tiger Nasdaq 100",
+     "code":"293474",
+     "cnt":"283",
+     "cur_price":"4000",
+     "buy_price":"3000",
+     "ideal_ratio":"20",
+     "cur_ratio":"25",
+     "profit_rate":"30"},
+    {"name":"Tiger bonds 100",
+     "code":"22321",
+     "cnt":"300",
+     "cur_price":"2000",
+     "buy_price":"2200",
+     "ideal_ratio":"15",
+     "cur_ratio":"10",
+     "profit_rate":"10"}]
+}
