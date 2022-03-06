@@ -102,6 +102,99 @@ def get_mdd_values(conn, code, start_date, end_date=None):
 
     return d, p, cur_down, this_max_mdd, this_max_mdd_date, all_max_mdd, all_max_mdd_date, peak, last_peak_date
 
+import json
+
+def to_asset_alloc_fund_json(conn, fund_name, item_list):
+
+    resp_str = ( '{   "fund_name":"Samsung Stock IRP1", '
+                    ' "fund_meta":"Write your additional strings", '
+                    ' "total_price":"1000000", '
+                    ' "cur_price":"1500000", '
+                    ' "profit_rate":"50", '
+                    ' "stocks":[ '
+                            ' {"name":"Tiger Nasdaq 100", "code":"293474", "cnt":"283", '
+                            ' "cur_price":"4000", "buy_price":"3000", "ideal_ratio":"20", '
+                            ' "cur_ratio":"25", "profit_rate":"30"}, '
+                            ' {"name":"Tiger S&P 100", "code":"332343", "cnt":"283", '
+                            ' "cur_price":"4000", "buy_price":"3000", "ideal_ratio":"20", '
+                            ' "cur_ratio":"25", "profit_rate":"30"} '
+                            ']'
+
+                 '} '
+                 )
+    resp = json.loads(resp_str)
+
+    resp["fund_name"] = fund_name
+    resp["fund_meta"] = "Asset Allocation Self Fund"
+
+    total_percent = 0.0
+    total_amount = 0.0
+    current_total_amount = 0
+    for s in item_list:
+        total_percent += s.get_ideal_ratio()
+        total_amount += s.get_count() * s.get_avg_price()
+        valid, price, sdate = hdb.get_latest_price_from_db(conn, s.get_code())
+        if valid:
+            current_total_amount += price * s.get_count()
+    
+    if total_percent != 100.0:
+        print(f'Fund: {fund_name} => Strange total percent is not 100 but {total_percent: .2f}')
+    resp["total_price"] = f'{total_amount: .1f}'
+    
+    stock_list = []
+    for s in item_list:
+        code = s.get_code()
+        valid, price, sdate = hdb.get_latest_price_from_db(conn, code)
+        item_str = None
+        if valid:
+            if s.get_count() == 0:
+                item_str = (f' "name":"{s.get_name()}", "code":"{s.get_code()}", "cnt":"{s.get_count()}", "cur_price":"{price: .2f}",'
+                f' "buy_price":"{s.get_avg_price(): .2f}", "ideal_ratio":"{s.get_ideal_ratio(): .2f}",' 
+                f' "cur_ratio":"0.0", "profit_rate":"0.0"') 
+            else:
+                cur_ratio = (s.get_count() * price)/current_total_amount * 100.0
+                profit_rate = (price - s.get_avg_price())/s.get_avg_price() * 100.0
+                item_str = (f' "name":"{s.get_name()}", "code":"{s.get_code()}", "cnt":"{s.get_count()}", "cur_price":"{price: .2f}",'
+                f' "buy_price":"{s.get_avg_price(): .2f}", "ideal_ratio":"{s.get_ideal_ratio(): .2f}",' 
+                f' "cur_ratio":"{cur_ratio: .2f}", "profit_rate":"{profit_rate: .2f}"') 
+            item_str = '{ ' + item_str + '}'
+            stock_list.append(item_str)
+
+    if total_amount > 0:
+        total_profit = (current_total_amount - total_amount)/total_amount * 100.0
+        resp["profit_rate"] = f'{total_profit: .1f}'
+    else:
+        resp["profit_rate"] = '0.0'
+    resp["cur_price"] = f'{current_total_amount: .1f}'
+    resp["stocks"] = stock_list
+
+    str_out = json.dumps(resp)
+    import re
+    str_out = re.sub(r"\\","", str_out);
+    str_out = re.sub(" ", "", str_out);
+    #str_out = str_out.replace('["', '[');
+    #str_out = str_out.replace('"]', ']');
+    str_out = str_out.replace('}"', '}');
+    str_out = str_out.replace('"{', '{');
+    #print(str_out)
+
+    return str_out
+
+def get_asset_alloc_status(conn):
+    fund_data = hdb.get_asset_alloc_data(conn)
+
+    asset_list = []
+    for fund_name in fund_data.keys():
+        item_list = fund_data[fund_name]
+        print(f'---------------- {fund_name} --------------------')
+        for s in item_list:
+            print(s.to_string())
+        print('-'*50)
+        str_out = to_asset_alloc_fund_json(conn, fund_name, item_list)
+        asset_list.append(str_out)
+
+    return asset_list
+
 
 def get_current_mdd(conn, code, start_date, end_date=None):
     cur_date, price, cur_down, this_max_mdd, this_max_mdd_date, all_max_mdd, all_max_mdd_date = get_mdd_values(conn, code, start_date, end_date)

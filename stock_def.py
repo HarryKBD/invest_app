@@ -4,7 +4,10 @@ Created on Sun Mar 14 17:58:29 2021
 
 @author: keybd
 """
+from unicodedata import category
 from happy_utils import FORMAT_DATE
+from datetime import datetime
+import happy_utils as ht
 
 class StockPrice:
     def __init__(self, code, date, openp = 0.0, highp = 0.0, lowp = 0.0, closep=0.0, volume = 0, change=0.0):
@@ -113,3 +116,64 @@ class StockTrackingResult:
 
         return (str1 + str2)
 
+class AssetAllocItem:
+    def __init__(self):
+        pass
+
+    def set_asset_data(self, fund, code, name_eng, name_kor, price, count, ideal_ratio, category, last_update=None):
+        self.fund_name = fund
+        self.stock_code = code
+        self.stock_name_eng = name_eng
+        self.stock_name_kor = name_kor
+        self.avg_price = price
+        self.count = count
+        self.ideal_ratio = ideal_ratio
+        self.category = category
+        if last_update == None:
+            today = datetime.now()
+            self.last_update = ht.datetime_to_str(today)
+        else:
+            self.last_update = last_update
+
+    def set_asset_data_by_series(self, pd_stock):
+        self.fund_name = pd_stock['fund_name']
+        self.stock_code = pd_stock['stock_code']
+        self.stock_name_eng = pd_stock['stock_name_eng']
+        self.stock_name_kor = pd_stock['stock_name_kor']
+        self.avg_price = float(pd_stock['avg_price'])
+        self.count = int(pd_stock['count'])
+        self.ideal_ratio = pd_stock['ideal_ratio']
+        self.category = pd_stock['category']
+        self.last_update = pd_stock['last_updated']
+
+    def get_fund_name(self):
+        return self.fund_name
+    
+    def get_code(self):
+        return self.stock_code
+    
+    def get_name(self):
+        return self.stock_name_eng
+    
+    def get_name_kor(self):
+        return self.stock_name_kor
+    
+    def get_count(self):
+        return self.count
+    
+    def get_last_update_date(self):
+        return self.last_update
+
+    def get_ideal_ratio(self):
+        return self.ideal_ratio
+
+    def get_category(self):
+        return self.category
+    
+    def get_avg_price(self):
+        return self.avg_price
+
+    def to_string(self):
+        str = f'FUND: {self.fund_name} => {self.stock_name_eng} {self.stock_name_kor} {self.stock_code} \
+               {self.avg_price: .1f} {self.count} {self.ideal_ratio: .1f} {self.category} {self.last_update}'
+        return str

@@ -8,7 +8,6 @@ FORMAT_DATE = '%Y-%m-%d'
 
 import datetime
 import hdb
-from happy_utils import FORMAT_DATE
 from workalendar.asia import SouthKorea
 
 

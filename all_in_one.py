@@ -228,7 +228,13 @@ def create_server_response(type=None):
                              ' "this_max_mdd_date" : "2021-11-01", '
                              ' "this_max_mdd" : "50.22" '
                              '} ], '
-           ' "laa": { "labor" : "True", "Spy" : "False" } ' 
+           ' "laa": { "labor" : "True", "Spy" : "False" }, ' 
+           ' "asset_alloc_funds" : [ {"fund_name":"Samsung_Pention_1", "fund_meta":"AssetAllocationSelfFund", "total_price":"55969815.0","cur_price":"54469070.0", "profit_rate":"-2.7",'
+                                      ' "stocks": '
+                                        ' [ {"name":"KODEXUSS&P500_H","code":"219480","cnt":"728", "cur_price":"21005.00","buy_price":"23080.00","ideal_ratio":"30.00", "cur_ratio":"28.07","profit_rate":"-8.99"}, '
+                                        ' {"name":"KBSTARUSlongbonds_H","code":"267440","cnt":"713", "cur_price":"11250.00","buy_price":"11770.00","ideal_ratio":"15.00", "cur_ratio":"14.73","profit_rate":"-4.42"}, '
+                                        ' {"name":"KODEXUSUltra30y_H","code":"304660","cnt":"1769","cur_price":"11845.00","buy_price":"12660.00","ideal_ratio":"40.00","cur_ratio":"38.47","profit_rate":"-6.44"} '
+                                        ' ]} ]'
            ' } ')
 
     conn = hdb.connect_db("stock_all.db")
@@ -264,6 +270,10 @@ def create_server_response(type=None):
     resp["laa"]["labor"] = un_status_str
     resp["laa"]["Spy"] = snp_status_str
 
+    asset_list = su.get_asset_alloc_status(conn)
+
+    resp["asset_alloc_funds"] = asset_list
+
     str = json.dumps(resp)
 
     import re
@@ -277,7 +287,6 @@ def create_server_response(type=None):
     print(str)
     conn.close()
     return str
-
 
 
 def show_mdd_status(conn):
@@ -294,6 +303,9 @@ if __name__ == "__main__":
     fund_list = ['HighPerf_LowVal', 'SuperQuant', 'NewMagic_Small20']
     print("Connected to db")
 
+    create_server_response()
+
+    fjdkslfjdskflj;asdfkds
     while True:
         line = input('Prompt ("quit" to quit): ')
         if line == 'quit' or line == 'q':

@@ -8,10 +8,11 @@ import matplotlib.pyplot as plt
 import sqlite3
 import csv
 from datetime import datetime
+from stock_def import AssetAllocItem
 
 FORMAT_DATE = '%Y-%m-%d'
-MY_HOME='/home/pi/invest_app/'
-#MY_HOME='./'
+#MY_HOME='/home/pi/invest_app/'
+MY_HOME='./'
 
 def connect_db(db_name):
     conn = sqlite3.connect(MY_HOME + db_name)
@@ -91,6 +92,22 @@ def get_current_price(code):
     print("Today: " + d)
     return get_closed_price(code, d)
 
+def get_latest_price_from_db(conn, code):
+    c = conn.cursor()
+    query = "select close, sdate from stocks where code='{}' order by sdate desc LIMIT 1".format(code)
+
+    cnt = 0
+    price = 0
+    sdate = None
+    for row in c.execute(query):
+        price = float(row[0])
+        sdate = row[1]
+        cnt += 1
+
+    if cnt == 0:
+        return False, None, None
+    else:
+        return True, price, sdate
 
 def get_stock_names(conn, code):
     query = "select name_kor, name_eng from stock_basic_info where code = '{}'".format(code)
@@ -295,6 +312,84 @@ def create_fund_table(conn):
         return False
     return True
 
+def drop_asset_allocation_stock_table(conn):
+    query = "DROP TABLE IF EXISTS asset_alloc_stock;"
+    try:
+        c = conn.cursor()
+        c.execute(query)
+        conn.commit()
+    except Error as e:
+        print(e)
+        return False
+    return True
+
+
+def create_asset_allocation_stock_table(conn):
+    drop_asset_allocation_stock_table(conn)
+    query = """CREATE TABLE IF NOT EXISTS asset_alloc_stock(
+                fund_name TEXT NOT NULL,
+                stock_code TEXT NOT NULL,
+                stock_name_eng TEXT NOT NULL,
+                stock_name_kor TEXT NOT NULL,
+                avg_price FLOAT NOT NULL,
+                count INT NOT NULL,
+                ideal_ratio FLOAT NOT NULL,
+                category INT NOT NULL,
+                last_updated DATE NOT NULL
+                );"""
+    try:
+        c = conn.cursor()
+        c.execute(query)
+        conn.commit()
+    except Error as e:
+        print(e)
+        return False
+    return True
+
+def insert_asset_alloc_stock_data(conn, s_list):
+    try:
+        c = conn.cursor()
+        for s in s_list:
+            query = (
+                    "insert or replace into asset_alloc_stock( "
+                    + "fund_name, stock_code, stock_name_eng, stock_name_kor, avg_price, count, ideal_ratio, category, last_updated) "
+                    + "values('{}', '{}', '{}', '{}', {:.1f}, {}, {:.1f}, {}, {})"
+                    ).format(s.get_fund_name(), s.get_code(), s.get_name(), s.get_name_kor(), s.get_avg_price(),
+                             s.get_count(), s.get_ideal_ratio(), s.get_category(), s.get_last_update_date())
+            c.execute(query)
+        conn.commit()
+    except sqlite3.DatabaseError as e:
+        print(e)
+
+import copy
+
+def get_asset_alloc_data(conn):
+    query = (
+            "select fund_name, stock_code, stock_name_eng, stock_name_kor, avg_price, count, ideal_ratio, category, last_updated "
+            + "from asset_alloc_stock where fund_name in (select DISTINCT(fund_name) from asset_alloc_stock)"
+            )
+
+    c = conn.cursor()
+    
+    last_fund_name = "NONE"
+    item_list = []
+    asset_fund_data = {}
+    for row in c.execute(query):
+        fund_name = row[0]
+        item = AssetAllocItem()
+        item.set_asset_data(row[0], row[1], row[2], row[3], float(row[4]), int(row[5]), float(row[6]), int(row[7]), row[8])
+        if fund_name != last_fund_name: #append
+            #"select fund_name, stock_code, stock_name_eng, stock_name_kor, avg_price, count, ideal_ratio, category, last_updated "
+            if len(item_list) > 0:
+                asset_fund_data[last_fund_name] = copy.deepcopy(item_list)
+            item_list.clear()
+            last_fund_name = fund_name
+        item_list.append(item)
+
+    if len(item_list) > 0:
+        asset_fund_data[last_fund_name] = copy.deepcopy(item_list)
+    return asset_fund_data
+ 
 
 def get_fund_items(conn, fund_name='all'):
     stock_list = []
@@ -390,3 +485,4 @@ def create_all_tables(conn):
     create_stock_price_table(conn)
     create_target_list_table(conn)
     create_fund_table(conn)
+    create_asset_allocation_stock_table(conn)

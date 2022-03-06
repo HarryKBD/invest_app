@@ -1,0 +1,24 @@
+﻿fund_name,stock_name_kor,stock_name_eng,stock_code,avg_price,count,ideal_ratio,category,last_updated
+Namu_Pention_1,KOSEF국고채10년,KOSEF National Bonds 10Y,148070,117985,74,17.5,2,2022-01-01
+Namu_Pention_1,ARING신흥국 MCSI(합성H),Ariring MCSI_H,195980,12010,727,17.5,1,2022-01-02
+Namu_Pention_1,TIGER 단기채권Active,Tiger short bonds active,272580,50210,149,15,4,2022-01-03
+Namu_Pention_1,Tiger 미국채10년선물,Tiger US bonds 10y,305080,12090,724,17.5,2,2022-01-04
+Namu_Pention_1,Tiger골드선물,Tiger Gold,319640,12940,579,15,3,2022-01-05
+Namu_Pention_1,Tiger미국 S&P500,Tiger US S&P500,360750,14080,621,17.5,1,2022-01-06
+Samsung_Pention_1,KODEX 미국 S&P500선물(H),KODEX US S&P500_H,219480,23080,728,30,1,2022-01-07
+Samsung_Pention_1,KBSTAR미국장기국채선물(H),KBSTAR US long bonds_H,267440,11770,713,15,2,2022-01-08
+Samsung_Pention_1,KODEX미국채울트라30년선물(H),KODEX US Ultra 30y_H,304660,12660,1769,40,2,2022-01-09
+Samsung_Pention_1,KODEX WTI원유선물(H),KODEX WTI Oil_H,261220,11885,235,5,3,2022-01-10
+Samsung_Pention_1,Tiger골드선물(H),Tiger Gold_H,319640,13020,322,5,3,2022-01-11
+Samsung_Pention_1,Tiger농산물선물Enhanced(H),Tiger Argri_Enhnaced_H,137610,6870,203,5,3,2022-01-12
+Samsung_IRP_1,Tiger미국 S&P500,Tiger US S&P 500,360750,13955,250,17.5,1,2022-01-13
+Samsung_IRP_1,ARIRANG신흥국MCSI(합성H),ARIRANG MCSI_H,195980,11690,299,17.5,1,2022-01-14
+Samsung_IRP_1,KOSEF국고채10년,KOSEF KOR Bonds 10y,148070,119260,29,17.5,2,2022-01-15
+Samsung_IRP_1,ARING미국장기우량회사채,ARING US Long Comp Bond,332620,103405,33,17.5,2,2022-01-16
+Samsung_IRP_1,Tiger미국MCSI리츠(합성H),Tiger US MCSI Ritz_H,182480,100,0,15,3,2022-01-17
+Samsung_IRP_1,Tiger 단기채권Active,Tiger Short Bonds Active,272580,50205,48,15,4,2022-01-18
+Mirae_Pention_1,TIGER 미국S&P500,Tiger US S&P500 100,360750,100,0,20,1,2022-01-19
+Mirae_Pention_1,KBSTAR 미국나스닥100,KBSTAR US Nasdaq 100,368590,100,0,20,1,2022-01-20
+Mirae_Pention_1,KODEX 선진국MSCI World,KODEX Developed MSCI World,251350,100,0,20,1,2022-01-21
+Mirae_Pention_1,KODEX 미국채10년선물,KODEX US Bonds 10y,308620,100,0,20,2,2022-01-22
+Mirae_Pention_1,KODEX 미국채울트라30년선물(H),KODEX US Ultra bonds 30y_H,304660,100,0,20,2,2022-01-23
