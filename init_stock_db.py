@@ -195,18 +195,15 @@ if __name__ == "__main__":
     #my_codes = ['VIG','QQQ','VTI','VOO','IVV','EFA','SPY', 'QLD', 'TQQQ', 'FNGU', 'DDM', 'SOXL', 'SSO', 'UPRO','123320', '233160', '243880', '122630', '306950', '233740', '102110', '232080', '139260', '229720', '226980', '229200', '102110', '114820']
     #my_codes = ['VT', 'DBC', 'IAU', 'TLT', 'LTPZ', 'VCLT', 'EMLC']
     #my_codes = ['US500', 'UNRATE']
-#    my_codes = ['IWD', 'GLD', 'IEF', 'SHY', 'DOW', 'DIA', 'VIG','QQQ','VTI','VOO','IVV','EFA','SPY', 'QLD', 'TQQQ', 'FNGU', 'DDM', 'SOXL', \
-#                 'US500','SSO', 'UBT', 'UGL',  'UPRO', '123320', '233160', 'KS11', 'KQ11', 'HSI', 'TMF', 'TLT', 'RPAR', '409820', \
+    #my_codes = ['399001.SZ']
 
-    my_codes = ['148070','195980','272580', '305080', '319640', '360750', '219480', '267440', '304660','261220', '319640', \
-                 '137610', '360750', '195980', '148070', '332620', '182480', '272580', '360750', '368590', '251350', '308620', '304660']
-    #from code_list import my_codes
+    from code_list import my_codes
 
     tokens = '2000-01-01'.split("-")
     datef = datetime(int(tokens[0]), int(tokens[1]), int(tokens[2]))
     tokens ='2022-03-28'.split("-")
     datet = datetime(int(tokens[0]), int(tokens[1]), int(tokens[2]))
-    #prepare_initial_table(conn, my_codes, datef, datet)
+    prepare_initial_table(conn, my_codes, datef, datet)
     #prepare_fred_init_data(conn, datef, datet)
     #init_fund_list_db(conn)
 

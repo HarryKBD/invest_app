@@ -12,23 +12,29 @@ def is_us_stock(code):
         return True
 
 def update_stock_db_today(conn, code):
+    today = datetime.datetime.now()
+    #test_date = '2022-03-10'
+    #today = ht.to_datetime(test_date)
+    l = hs.get_stock_data_from_server(code, today, today)
+
     if is_us_stock(code):
         tz = timezone('US/Eastern')
         today = datetime.datetime.now(tz)
-        #print(f'us time today: {ht.datetime_to_str(today)}')
-    else: 
-        today = datetime.datetime.now()
-        #print(f'KOR time today: {ht.datetime_to_str(today)}')
-    #today = ht.to_datetime('2021-08-12')
-    l = hs.get_stock_data_from_server(code, today, today)
-    if len(l) != 1:
-        #print(f'code: {code} => there is no data for today. very strange')
-        return None, ht.datetime_to_str(today)
+        #today = ht.to_datetime(test_date)
+        print(f'us time today: {ht.datetime_to_str(today)}')
     else:
-        #print(f'{code} ==> {l[0].get_date()} value: {l[0].get_close()}')
-        hdb.insert_stock_data(conn, l)
+        print(f'KOR time today: {ht.datetime_to_str(today)}')
+ 
+    today_str = ht.datetime_to_str(today)
 
-    return l[0].get_close(), ht.datetime_to_str(today)
+    if len(l) > 0:
+        for s in l:
+            if s.get_date() == today_str:
+                print(f"Got the today's data {code} ==> {s.get_date()} value: {s.get_close()}")
+                hdb.insert_stock_data(conn, l)
+                return s.get_close(), ht.datetime_to_str(today)
+
+    return None, ht.datetime_to_str(today)
 
 def get_stock_trend(conn, code, from_date_str, to_date_str = None):
     today = datetime.datetime.now()

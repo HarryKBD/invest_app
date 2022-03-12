@@ -239,7 +239,7 @@ def create_server_response(type=None):
 
     conn = hdb.connect_db("stock_all.db")
 
-    code_list = ['TQQQ', 'QLD', 'QQQ', 'SPY', 'SOXL', 'UPRO', 'VTI', 'TMF', 'TLT', 'RPAR', 'KS11', 'KQ11', '409820']
+    code_list = ['TQQQ', 'QLD', 'QQQ', 'SPY', 'SOXL', 'UPRO', 'VTI', 'TMF', 'TLT', 'RPAR', '^KS11', '^KQ11', '409820', '399001.SZ']
     start_date = '2015-01-01'
 
     resp = json.loads(resp_str)
@@ -303,9 +303,6 @@ if __name__ == "__main__":
     fund_list = ['HighPerf_LowVal', 'SuperQuant', 'NewMagic_Small20']
     print("Connected to db")
 
-    create_server_response()
-
-    fjdkslfjdskflj;asdfkds
     while True:
         line = input('Prompt ("quit" to quit): ')
         if line == 'quit' or line == 'q':

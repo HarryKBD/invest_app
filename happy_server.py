@@ -1,5 +1,6 @@
 
 import FinanceDataReader as fdr
+import yfinance as yf
 from datetime import datetime
 from datetime import timedelta
 from datetime import date
@@ -7,7 +8,47 @@ from stock_def import StockPrice
 from happy_utils import FORMAT_DATE
 import happy_utils as ht
 
+def get_read_package_name(code):
+    if code.isnumeric():
+        return 'fdr'
+    else:
+        return 'yf'
 def get_stock_data_from_server(code, s_datetime, e_datetime):
+    package = get_read_package_name(code)
+
+    if package == 'fdr':
+        return get_stock_data_from_server_by_fdr(code, s_datetime, e_datetime)
+    else:
+        return get_stock_data_from_server_by_yh(code, s_datetime, e_datetime)
+
+
+def get_stock_data_from_server_by_yh(code, s_datetime, e_datetime):
+    price_days = []
+    col_closed = 'Close'
+    sdate_str = s_datetime.strftime(FORMAT_DATE)
+    edate_str = e_datetime.strftime(FORMAT_DATE)
+
+    to_read_e_datetime = e_datetime + timedelta(days=1)
+    to_read_edate_str = to_read_e_datetime.strftime(FORMAT_DATE)
+    df = yf.download(code, start=sdate_str, end=to_read_edate_str)
+    if len(df) > 0:
+        openp = df['Open']
+        highp = df['High']
+        lowp = df['Low']
+        closep = df[col_closed]
+        vol = df['Volume']
+        idx = df.index
+        i = 0
+        for c in closep:
+            last_date =  idx[i].to_pydatetime()
+            s = StockPrice(code, last_date, float(openp[i]), float(highp[i]), 
+                    float(lowp[i]),  float(c), int(vol[i]), 0.0)
+            price_days.append(s)
+            #print(s.to_text())
+            i += 1
+    return price_days
+
+def get_stock_data_from_server_by_fdr(code, s_datetime, e_datetime):
     price_days = []
     col_closed = 'Close'
     sdate_str = s_datetime.strftime(FORMAT_DATE)
@@ -43,6 +84,7 @@ def get_stock_data_from_server(code, s_datetime, e_datetime):
         #sdate_str = "{}-{}-{}".format(last_date.year, last_date.month+1, last_date.day)
 
     return price_days
+
 
 def get_fred_data_from_server(code, s_datetime, e_datetime):
     sdate_str = s_datetime.strftime(FORMAT_DATE)

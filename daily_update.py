@@ -7,7 +7,7 @@ import init_stock_db as indb
 
 
 def update_stock_daily_db(conn):
-    #code_l = ['QQQ', 'QLD', '302440', '285130', '024090', 'RPAR', 'UPRO']
+    #code_l = ['^KS11', 'QQQ', 'QLD', '302440', '285130', '024090', 'RPAR', 'UPRO']
     #for c in code_l:
     for c in code_list.my_codes:
         price, dd = su.update_stock_db_today(conn, c)
