@@ -203,9 +203,11 @@ def get_asset_alloc_status(conn):
 
 
 def get_current_mdd(conn, code, start_date, end_date=None):
-    cur_date, price, cur_down, this_max_mdd, this_max_mdd_date, all_max_mdd, all_max_mdd_date = get_mdd_values(conn, code, start_date, end_date)
+    cur_date, price, cur_down, this_max_mdd, this_max_mdd_date, all_max_mdd, all_max_mdd_date, \
+                                peak, last_peak_date = get_mdd_values(conn, code, start_date, end_date)
     return cur_down, cur_date
 
 def get_this_cycle_max_mdd(conn, code, start_date, end_date=None):
-    cur_date, price, cur_down, this_max_mdd, this_max_mdd_date, all_max_mdd, all_max_mdd_date = get_mdd_values(conn, code, start_date, end_date)
+    cur_date, price, cur_down, this_max_mdd, this_max_mdd_date, all_max_mdd, all_max_mdd_date, \
+                                peak, last_peak_date = get_mdd_values(conn, code, start_date, end_date)
     return this_max_mdd, this_max_mdd_date
