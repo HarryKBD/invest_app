@@ -11,8 +11,8 @@ from datetime import datetime
 from stock_def import AssetAllocItem
 
 FORMAT_DATE = '%Y-%m-%d'
-#MY_HOME='/home/pi/invest_app/'
-MY_HOME='./'
+MY_HOME='/home/pi/invest_app/'
+#MY_HOME='./'
 
 def connect_db(db_name):
     conn = sqlite3.connect(MY_HOME + db_name)

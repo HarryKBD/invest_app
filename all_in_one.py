@@ -17,6 +17,7 @@ import stock_utils as su
 import laa
 import code_list
 import json
+import daily_update as du
 
 
 cal = SouthKorea()
@@ -203,7 +204,7 @@ def get_fund_stocks(conn):
     return fund_stocks_all
 
 def show_market_trend(conn):
-    codes = code_list.my_interested_codes
+    codes = code_list.ticker_code
     
     for c in codes:
         high, low, latest = su.get_stock_trend(conn, c, '2019-01-01')
@@ -239,14 +240,14 @@ def create_server_response(type=None):
 
     conn = hdb.connect_db("stock_all.db")
 
-    code_list = ['TQQQ', 'QLD', 'QQQ', 'SPY', 'SOXL', 'UPRO', 'VTI', 'TMF', 'TLT', 'RPAR', '^KS11', '^KQ11', '409820', '399001.SZ']
+    codes = code_list.ticker_code
     start_date = '2015-01-01'
 
     resp = json.loads(resp_str)
 
 #gather mdd stock status
     mdd_list = []
-    for c in code_list:
+    for c in codes:
         cur_date, price, cur_down, this_max_mdd, this_max_mdd_date, all_max_mdd, \
         all_max_mdd_date, last_peak, last_peak_date = su.get_mdd_values(conn, c, start_date)
 
@@ -290,12 +291,9 @@ def create_server_response(type=None):
 
 
 def show_mdd_status(conn):
-    su.get_current_mdd(conn, 'TQQQ', '2015-01-01')
-    su.get_current_mdd(conn, 'QLD', '2015-01-01')
-    su.get_current_mdd(conn, 'QQQ', '2015-01-01')
-    su.get_current_mdd(conn, 'SPY', '2015-01-01')
-    su.get_current_mdd(conn, 'SOXL', '2015-01-01')
-    su.get_current_mdd(conn, 'UPRO', '2015-01-01')
+    codes = code_list.ticker_code
+    for c in codes:
+        su.get_current_mdd(conn, c, '2015-01-01')
 
 if __name__ == "__main__":
     conn = hdb.connect_db("stock_all.db")

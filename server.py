@@ -1,6 +1,7 @@
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from json import dumps
 import all_in_one as ut
+import daily_update as du
 
 
 #http://192.168.0.44:8081/geek9?type=carousell
@@ -38,6 +39,8 @@ class RequestHandler(BaseHTTPRequestHandler):
             print('merci')
         response = ut.create_server_response('all')
         self.send_dict_response(response)
+        #print("Updating daily......")
+        #du.update_daily_from_external()
 
     def do_GET(self):
         self.send_response(200)

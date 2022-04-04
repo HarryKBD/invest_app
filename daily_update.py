@@ -6,7 +6,7 @@ import happy_utils as ht
 import init_stock_db as indb
 
 
-def update_stock_daily_db(conn):
+def update_stock_daily_db(log, conn):
     #code_l = ['^KS11', 'QQQ', 'QLD', '302440', '285130', '024090', 'RPAR', 'UPRO']
     #for c in code_l:
     for c in code_list.my_codes:
@@ -15,6 +15,15 @@ def update_stock_daily_db(conn):
             log.w('today: ' + dd + ' Updating ' + c + '  ' + str(price))
         else:
             log.w('today: ' + dd + ' No update ' + c)
+
+def update_daily_from_external():
+    log = ht.Logger("daily")
+    log.enable()    
+    conn = hdb.connect_db("stock_all.db")
+    update_stock_daily_db(log, conn)
+    #indb.prepare_fred_init_data(conn, ht.to_datetime('1900-01-01'), datetime.datetime.now())
+    log.disable()
+    conn.close()
 
 if __name__ == '__main__':
 
@@ -25,7 +34,8 @@ if __name__ == '__main__':
     log.w("Getting today's data from server and insert into database. today is : " + ht.datetime_to_str(datetime.datetime.now()))
     conn = hdb.connect_db("stock_all.db")
 
-    update_stock_daily_db(conn)
+    update_stock_daily_db(log, conn)
     indb.prepare_fred_init_data(conn, ht.to_datetime('1900-01-01'), datetime.datetime.now())
+    log.disable()
 
     conn.close()

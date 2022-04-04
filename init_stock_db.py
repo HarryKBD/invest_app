@@ -201,13 +201,14 @@ if __name__ == "__main__":
 
     tokens = '2000-01-01'.split("-")
     datef = datetime(int(tokens[0]), int(tokens[1]), int(tokens[2]))
-    tokens ='2022-03-28'.split("-")
+    tokens ='2022-04-28'.split("-")
     datet = datetime(int(tokens[0]), int(tokens[1]), int(tokens[2]))
-    prepare_initial_table(conn, my_codes, datef, datet)
+    print(my_codes)
+    #prepare_initial_table(conn, my_codes, datef, datet)
     #prepare_fred_init_data(conn, datef, datet)
     #init_fund_list_db(conn)
 
-    init_asset_alloc_fund_db(conn, './fund_list.csv')
+    init_asset_alloc_fund_db(conn, './fund_list_today.csv')
 
   
 
