@@ -1,3 +1,4 @@
+from re import I
 import happy_utils as ht
 import happy_server as hs
 import hdb
@@ -211,3 +212,105 @@ def get_this_cycle_max_mdd(conn, code, start_date, end_date=None):
     cur_date, price, cur_down, this_max_mdd, this_max_mdd_date, all_max_mdd, all_max_mdd_date, \
                                 peak, last_peak_date = get_mdd_values(conn, code, start_date, end_date)
     return this_max_mdd, this_max_mdd_date
+
+
+#one month
+#three months
+#six months
+
+import calendar
+#get profit rate for month_before months. (default: 3 month profit rate)
+#the last month is the before month of the base_date.
+def get_period_date(base_date, month_before=3):
+    tokens =  base_date.split("-")
+    base_year = int(tokens[0])
+    base_mon = int(tokens[1])
+
+    #'2022-02-21' month_before = 3
+    start_month = base_mon - month_before  # 2 - 3 = -1
+    start_year = base_year
+    start_date = 1
+    if start_month <= 0:
+        start_month += 12      # -1 + 12 = 11
+        start_year -= 1  # 2022 - 1 = 2021
+
+    end_year = base_year
+    end_month = base_mon - 1
+    if end_month <= 0:
+        end_month += 12
+        end_year -= 1
+    end_date = calendar.monthrange(end_year, end_month)[1]
+
+    start_date = "{}-{:02}-{:02}".format(start_year, start_month, start_date)
+    end_date = "{}-{:02}-{:02}".format(end_year, end_month, end_date)
+
+    return start_date, end_date
+
+
+#def get_n_month_profit_rate(conn, code, base_date, month_before=3):
+       
+
+def get_acc_dual_momenterm_score(conn, code, today_date=None):
+
+    if today_date == None:
+        today_date = datetime.datetime.now()
+
+    today_dt = ht.to_datetime(today_date)
+    start_dt = today_dt - datetime.timedelta(days=400)
+
+    
+    valid, dd, price = hdb.get_stock_data_from_db(conn, code, start_dt, today_dt)
+    if valid == False:
+        return None
+
+    last_peak_date = '0000-00-00'
+    all_max_mdd_date = '0000-00-00'
+    all_max_mdd = 0
+    peak = -100
+    this_max_mdd = 0
+    this_max_mdd_date = '0000-00-00'
+    for d, p in zip(dd, price):
+        if d == '2016-02-27':
+            continue
+        if p > peak:
+            peak = p
+            last_peak_date = d
+            this_max_mdd = 0
+            #print(f'{d} ==> {p: .3f} NEW Peak')
+
+        cur_down = (peak - p)/peak * 100.0
+
+        if cur_down > this_max_mdd:
+            this_max_mdd = cur_down
+            this_max_mdd_date = d
+            if this_max_mdd > all_max_mdd:
+                all_max_mdd = this_max_mdd
+                all_max_mdd_date = d
+    print(f'{code}  {d} ==> {p: .3f} cur_down: {cur_down: .3f} this_mdd: {this_max_mdd: .3f} ({this_max_mdd_date}) last_peak: {last_peak_date} all_max_mdd: {all_max_mdd: .2f} ({all_max_mdd_date}) ')
+
+    return d, p, cur_down, this_max_mdd, this_max_mdd_date, all_max_mdd, all_max_mdd_date, peak, last_peak_date
+
+if __name__ == "__main__":
+    base_date = '2022-01-01'
+    before_m = 3
+    expected_start_date = '2021-10-01'
+    expected_end_date = '2021-12-31' 
+    start_date, end_date = get_period_date(base_date, before_m)
+    if start_date != expected_start_date or end_date != expected_end_date:
+        print("ERROR:", start_date, end_date)
+    
+    base_date = '2022-03-11'
+    before_m = 6
+    expected_start_date = '2021-09-01'
+    expected_end_date = '2022-02-28' 
+    start_date, end_date = get_period_date(base_date, before_m)
+    if start_date != expected_start_date or end_date != expected_end_date:
+        print("ERROR:", start_date, end_date)
+ 
+    base_date = '2022-03-11'
+    before_m = 1
+    expected_start_date = '2022-02-01'
+    expected_end_date = '2022-02-28' 
+    start_date, end_date = get_period_date(base_date, before_m)
+    if start_date != expected_start_date or end_date != expected_end_date:
+        print("ERROR:", start_date, end_date)
